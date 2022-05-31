@@ -60,39 +60,37 @@ function App() {
     // setTodoList([...todoList, todo]);
 
     // Array.prototype.concat => 배열에 원소(배열)를 추가해서 '새로운 배열'을 return
-    setTodoList(todoList.concat(todo));
+    setTodoList((todoList) => todoList.concat(todo));
 
     nextId.current = nextId.current + 1;
     setInputs({
       text: "",
       deadline: "",
     });
-  }, [inputs, todoList]);
+  }, [inputs]);
 
-  const onRemove = useCallback(
-    (id) => {
-      setTodoList(todoList.filter((todo) => todo.id !== id));
-    },
-    [todoList]
-  );
+  const onRemove = useCallback((id) => {
+    // setTodoList(todoList.filter((todo) => todo.id !== id));
 
-  const onToggle = useCallback(
-    (id) => {
-      //  => {...todo} => {id : 1, text: "배열 렌더링하기 ", done :false}
-      //  => {id : 1, text: "배열 렌더링하기 ", done :false, done: !todo.done } => done 중복으로 덮어씌움.
-      setTodoList(
-        todoList.map((todo) => {
-          // if (id === todo.id) {
-          //   return { ...todo, done: !todo.done };
-          // } else {
-          //   return todo;
-          // }
-          return id === todo.id ? { ...todo, done: !todo.done } : todo;
-        })
-      );
-    },
-    [todoList]
-  );
+    // 함수형 업데이트 => setState의 값으로 함수를 전달하면
+    // => 함수의 첫번째 매개변수로 최신 state를 넘겨준다.
+    setTodoList((todoList) => todoList.filter((todo) => todo.id !== id));
+  }, []);
+
+  const onToggle = useCallback((id) => {
+    //  => {...todo} => {id : 1, text: "배열 렌더링하기 ", done :false}
+    //  => {id : 1, text: "배열 렌더링하기 ", done :false, done: !todo.done } => done 중복으로 덮어씌움.
+    setTodoList((todoList) =>
+      todoList.map((todo) => {
+        // if (id === todo.id) {
+        //   return { ...todo, done: !todo.done };
+        // } else {
+        //   return todo;
+        // }
+        return id === todo.id ? { ...todo, done: !todo.done } : todo;
+      })
+    );
+  }, []);
 
   // dependency에 넣은 todoList가 변화가 있을 때만 다시 계산을 한다.
   const count = useMemo(() => countTodo(todoList), [todoList]);
